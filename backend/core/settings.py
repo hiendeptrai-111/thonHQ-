@@ -168,4 +168,5 @@ else:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
+    EMAIL_TIMEOUT = 10
     DEFAULT_FROM_EMAIL = f"Đoàn thôn Hà Quảng Đông <{EMAIL_HOST_USER}>"
