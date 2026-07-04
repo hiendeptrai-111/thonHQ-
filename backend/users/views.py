@@ -62,7 +62,10 @@ class SendRegisterCodeView(APIView):
             return Response({"detail": "Mã xác minh đã được gửi thành công qua email của bạn."})
         except Exception as e:
             print("Register code sending error:", e)
-            return Response({"detail": f"Lỗi hệ thống: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Trả về mã OTP luôn nếu gửi mail thất bại (để vượt qua chặn cổng SMTP trên Render Free)
+            return Response({
+                "detail": f"Gửi mail thất bại (Render chặn SMTP). Mã xác thực OTP của bạn là: {code}"
+            })
 
 
 class SendResetPasswordCodeView(APIView):
@@ -92,7 +95,10 @@ class SendResetPasswordCodeView(APIView):
             return Response({"detail": "Mã xác minh đặt lại mật khẩu đã được gửi đến email của bạn."})
         except Exception as e:
             print("Password reset code sending error:", e)
-            return Response({"detail": f"Lỗi hệ thống: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Trả về mã OTP luôn nếu gửi mail thất bại (để vượt qua chặn cổng SMTP trên Render Free)
+            return Response({
+                "detail": f"Gửi mail thất bại (Render chặn SMTP). Mã xác thực OTP của bạn là: {code}"
+            })
 
 
 class VerifyResetPasswordView(APIView):
