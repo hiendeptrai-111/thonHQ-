@@ -41,58 +41,58 @@ class SendRegisterCodeView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        email = request.data.get('email')
-        if not email:
-            return Response({"detail": "Vui lòng nhập địa chỉ email."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if User.objects.filter(email=email).exists():
-            return Response({"detail": "Email này đã được sử dụng bởi tài khoản khác."}, status=status.HTTP_400_BAD_REQUEST)
-
-        code = str(random.randint(100000, 999999))
-        EmailVerification.objects.update_or_create(
-            email=email,
-            defaults={'code': code}
-        )
-
-        subject = 'Mã xác minh đăng ký tài khoản - Đoàn thôn Hà Quảng Đông'
-        message = f'Chào bạn,\n\nMã xác minh đăng ký tài khoản của bạn là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
-        
         try:
+            email = request.data.get('email')
+            if not email:
+                return Response({"detail": "Vui lòng nhập địa chỉ email."}, status=status.HTTP_400_BAD_REQUEST)
+
+            if User.objects.filter(email=email).exists():
+                return Response({"detail": "Email này đã được sử dụng bởi tài khoản khác."}, status=status.HTTP_400_BAD_REQUEST)
+
+            code = str(random.randint(100000, 999999))
+            EmailVerification.objects.update_or_create(
+                email=email,
+                defaults={'code': code}
+            )
+
+            subject = 'Mã xác minh đăng ký tài khoản - Đoàn thôn Hà Quảng Đông'
+            message = f'Chào bạn,\n\nMã xác minh đăng ký tài khoản của bạn là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
+            
             send_mail(subject, message, None, [email], fail_silently=False)
             return Response({"detail": "Mã xác minh đã được gửi thành công qua email của bạn."})
         except Exception as e:
-            print("Email sending error:", e)
-            return Response({"detail": "Lỗi khi gửi email xác thực. Vui lòng thử lại sau."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print("Register code sending error:", e)
+            return Response({"detail": f"Lỗi hệ thống: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SendResetPasswordCodeView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        email = request.data.get('email')
-        if not email:
-            return Response({"detail": "Vui lòng nhập địa chỉ email."}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({"detail": "Không tìm thấy tài khoản nào liên kết với email này."}, status=status.HTTP_400_BAD_REQUEST)
+            email = request.data.get('email')
+            if not email:
+                return Response({"detail": "Vui lòng nhập địa chỉ email."}, status=status.HTTP_400_BAD_REQUEST)
 
-        code = str(random.randint(100000, 999999))
-        PasswordResetCode.objects.update_or_create(
-            email=email,
-            defaults={'code': code}
-        )
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"detail": "Không tìm thấy tài khoản nào liên kết với email này."}, status=status.HTTP_400_BAD_REQUEST)
 
-        subject = 'Mã đặt lại mật khẩu - Đoàn thôn Hà Quảng Đông'
-        message = f'Chào {user.username},\n\nBạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.\nMã xác minh đặt lại mật khẩu là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
-        
-        try:
+            code = str(random.randint(100000, 999999))
+            PasswordResetCode.objects.update_or_create(
+                email=email,
+                defaults={'code': code}
+            )
+
+            subject = 'Mã đặt lại mật khẩu - Đoàn thôn Hà Quảng Đông'
+            message = f'Chào {user.username},\n\nBạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.\nMã xác minh đặt lại mật khẩu là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
+            
             send_mail(subject, message, None, [email], fail_silently=False)
             return Response({"detail": "Mã xác minh đặt lại mật khẩu đã được gửi đến email của bạn."})
         except Exception as e:
-            print("Email sending error:", e)
-            return Response({"detail": "Lỗi khi gửi email xác thực. Vui lòng thử lại sau."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print("Password reset code sending error:", e)
+            return Response({"detail": f"Lỗi hệ thống: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VerifyResetPasswordView(APIView):
