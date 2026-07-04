@@ -1,0 +1,17 @@
+# Environments
+.env
+backend/.env
+frontend/.env
+
+# Python
+**/venv/
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Node
+**/node_modules/
+**/dist/
+.DS_Store
+staticfiles/
+backend/staticfiles/
