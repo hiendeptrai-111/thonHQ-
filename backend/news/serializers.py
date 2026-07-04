@@ -48,7 +48,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = '__all__'
-        read_only_fields = ['author', 'views']
+        read_only_fields = ['author', 'views', 'slug']
 
     def get_comments(self, obj):
         # Lấy bình luận gốc (không có parent)

@@ -49,13 +49,17 @@ class ArticleViewSet(viewsets.ModelViewSet):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             article_id = response.data.get('id')
-            article_title = response.data.get('title')
+            article_title = response.data.get('title', '')
             if send_notification == True or send_notification == 'true':
-                Notification.objects.create(
-                    title=f"Tin mới: {article_title}",
-                    content=f"Có bài viết mới được đăng tải: \"{article_title}\". Nhấp vào để đọc ngay.",
-                    target_url=f"/article/{article_id}"
-                )
+                try:
+                    Notification.objects.create(
+                        title=f"Tin mới: {article_title}"[:250],
+                        content=f"Có bài viết mới được đăng tải: \"{article_title}\". Nhấp vào để đọc ngay.",
+                        target_url=f"/article/{article_id}"
+                    )
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(f"Failed to create notification: {e}")
         return response
 
     def update(self, request, *args, **kwargs):
@@ -63,13 +67,17 @@ class ArticleViewSet(viewsets.ModelViewSet):
         response = super().update(request, *args, **kwargs)
         if response.status_code == 200:
             article_id = response.data.get('id')
-            article_title = response.data.get('title')
+            article_title = response.data.get('title', '')
             if send_notification == True or send_notification == 'true':
-                Notification.objects.create(
-                    title=f"Cập nhật: {article_title}",
-                    content=f"Bài viết \"{article_title}\" đã có cập nhật mới. Nhấp vào để xem chi tiết.",
-                    target_url=f"/article/{article_id}"
-                )
+                try:
+                    Notification.objects.create(
+                        title=f"Cập nhật: {article_title}"[:250],
+                        content=f"Bài viết \"{article_title}\" đã có cập nhật mới. Nhấp vào để xem chi tiết.",
+                        target_url=f"/article/{article_id}"
+                    )
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(f"Failed to create notification: {e}")
         return response
 
     def retrieve(self, request, *args, **kwargs):
