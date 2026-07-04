@@ -33,9 +33,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 import random
-from django.core.mail import send_mail
 from rest_framework.views import APIView
 from .models import EmailVerification, PasswordResetCode, ChatMessage
+from .email_utils import send_email
 
 class SendRegisterCodeView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -58,14 +58,11 @@ class SendRegisterCodeView(APIView):
             subject = 'Mã xác minh đăng ký tài khoản - Đoàn thôn Hà Quảng Đông'
             message = f'Chào bạn,\n\nMã xác minh đăng ký tài khoản của bạn là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
             
-            send_mail(subject, message, None, [email], fail_silently=False)
+            send_email(email, subject, message)
             return Response({"detail": "Mã xác minh đã được gửi thành công qua email của bạn."})
         except Exception as e:
             print("Register code sending error:", e)
-            # Trả về mã OTP luôn nếu gửi mail thất bại (để vượt qua chặn cổng SMTP trên Render Free)
-            return Response({
-                "detail": f"Gửi mail thất bại (Render chặn SMTP). Mã xác thực OTP của bạn là: {code}"
-            })
+            return Response({"detail": f"Lỗi gửi email: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SendResetPasswordCodeView(APIView):
@@ -91,14 +88,11 @@ class SendResetPasswordCodeView(APIView):
             subject = 'Mã đặt lại mật khẩu - Đoàn thôn Hà Quảng Đông'
             message = f'Chào {user.username},\n\nBạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.\nMã xác minh đặt lại mật khẩu là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
             
-            send_mail(subject, message, None, [email], fail_silently=False)
+            send_email(email, subject, message)
             return Response({"detail": "Mã xác minh đặt lại mật khẩu đã được gửi đến email của bạn."})
         except Exception as e:
             print("Password reset code sending error:", e)
-            # Trả về mã OTP luôn nếu gửi mail thất bại (để vượt qua chặn cổng SMTP trên Render Free)
-            return Response({
-                "detail": f"Gửi mail thất bại (Render chặn SMTP). Mã xác thực OTP của bạn là: {code}"
-            })
+            return Response({"detail": f"Lỗi gửi email: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VerifyResetPasswordView(APIView):
