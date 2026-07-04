@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, X, Send, User } from 'lucide-react';
 import api from '../../api';
 
@@ -20,106 +20,147 @@ const getUsernameFromToken = () => {
   }
 };
 
+const CACHE_KEY = 'hqd_chat_messages';
+
 export default function ChatWidget() {
   const currentUsername = localStorage.getItem('username') || getUsernameFromToken() || '';
 
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
+  // Load cached messages immediately on init
+  const [messages, setMessages] = useState(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
   const [inputValue, setInputValue] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('idle'); // 'idle' | 'connected' | 'error'
   
   const messagesEndRef = useRef(null);
   const pollingRef = useRef(null);
+  const lastMsgCountRef = useRef(0);
 
-  // Load chat history when widget opens
+  // Save messages to localStorage whenever they update
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        // Only cache last 100 messages to avoid localStorage overflow
+        const toCache = messages.slice(-100);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(toCache));
+      } catch (e) {
+        console.warn('Failed to cache chat messages:', e);
+      }
+    }
+  }, [messages]);
+
+  // Fetch messages from server
+  const fetchMessages = useCallback(async () => {
+    try {
+      const response = await api.get('auth/chat/');
+      const serverMsgs = response.data;
+      setMessages(serverMsgs);
+      setConnectionStatus('connected');
+
+      // Check for new messages from admin (for unread badge)
+      if (serverMsgs.length > lastMsgCountRef.current && !isOpen) {
+        const lastMsg = serverMsgs[serverMsgs.length - 1];
+        if (lastMsg.sender_name !== currentUsername) {
+          setUnreadCount(prev => prev + (serverMsgs.length - lastMsgCountRef.current));
+        }
+      }
+      lastMsgCountRef.current = serverMsgs.length;
+    } catch (err) {
+      console.error("Failed to fetch chat messages:", err);
+      setConnectionStatus('error');
+    }
+  }, [currentUsername, isOpen]);
+
+  // Polling logic when widget is open
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
-      setUnreadCount(0); // clear unread count when opened
+      setUnreadCount(0);
       
-      // Start polling every 3 seconds for new messages
-      pollingRef.current = setInterval(fetchMessages, 3000);
+      // Poll every 2 seconds for snappy updates
+      pollingRef.current = setInterval(fetchMessages, 2000);
     } else {
       if (pollingRef.current) {
         clearInterval(pollingRef.current);
+        pollingRef.current = null;
       }
     }
     
     return () => {
       if (pollingRef.current) {
         clearInterval(pollingRef.current);
+        pollingRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [isOpen, fetchMessages]);
+
+  // Background polling when widget is closed (every 15s for unread badge)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isOpen) {
+        fetchMessages();
+      }
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [isOpen, fetchMessages]);
 
   // Scroll to bottom when messages update
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (messagesEndRef.current && isOpen) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
-
-  // Run initial poll for unread notifications even when closed
-  useEffect(() => {
-    const checkNewMessages = async () => {
-      try {
-        const response = await api.get('auth/chat/');
-        const msgs = response.data;
-        if (msgs.length > 0) {
-          const lastMsg = msgs[msgs.length - 1];
-          // If last message is from Admin and widget is closed
-          if (lastMsg.sender_name !== currentUsername && !isOpen) {
-            setUnreadCount(1);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to check chat updates:", err);
-      }
-    };
-
-    // Check once at mount and every 10 seconds when closed
-    checkNewMessages();
-    const interval = setInterval(() => {
-      if (!isOpen) {
-        checkNewMessages();
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [isOpen]);
-
-  const fetchMessages = async () => {
-    try {
-      const response = await api.get('auth/chat/');
-      setMessages(response.data);
-    } catch (err) {
-      console.error("Failed to fetch chat messages:", err);
-    }
-  };
+  }, [messages, isOpen]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isSending) return;
 
-    const content = inputValue;
+    const content = inputValue.trim();
     setInputValue('');
+    setIsSending(true);
     
-    // Add locally for instant UI update
+    // Add locally for instant UI update (optimistic)
     const tempMsg = {
-      id: Date.now(),
+      id: `temp-${Date.now()}`,
       sender_name: currentUsername,
       content: content,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      _pending: true
     };
     setMessages(prev => [...prev, tempMsg]);
 
     try {
       await api.post('auth/chat/', { content });
-      fetchMessages(); // Sync history
+      // Fetch fresh messages to replace optimistic one
+      await fetchMessages();
     } catch (err) {
       console.error("Failed to send message:", err);
+      // Mark the temp message as failed
+      setMessages(prev => prev.map(m => 
+        m.id === tempMsg.id ? { ...m, _failed: true, _pending: false } : m
+      ));
+    } finally {
+      setIsSending(false);
     }
+  };
+
+  const formatTime = (dateStr) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    
+    if (isToday) {
+      return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }) + 
+           ' ' + date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -129,11 +170,12 @@ export default function ChatWidget() {
         <button
           onClick={() => setIsOpen(true)}
           className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer relative"
+          style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
         >
           <MessageCircle size={26} />
           {unreadCount > 0 && (
-            <span className="absolute top-0 right-0 w-4.5 h-4.5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-black text-white">
-              !
+            <span className="absolute -top-1 -right-1 min-w-5 h-5 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-black text-white px-1">
+              {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
         </button>
@@ -141,7 +183,10 @@ export default function ChatWidget() {
 
       {/* Chat Window Panel */}
       {isOpen && (
-        <div className="w-[360px] sm:w-[380px] h-[480px] bg-white rounded-3xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden animate-fadeIn">
+        <div 
+          className="w-[360px] sm:w-[380px] h-[500px] bg-white rounded-3xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden"
+          style={{ animation: 'slideUpFade 0.3s ease-out' }}
+        >
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-4 text-white flex justify-between items-center shadow-md">
             <div className="flex items-center space-x-3">
@@ -151,8 +196,16 @@ export default function ChatWidget() {
               <div>
                 <h4 className="text-sm font-black leading-snug">Hỗ trợ trực tuyến</h4>
                 <div className="flex items-center space-x-1.5 mt-0.5">
-                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                  <span className="text-[10px] font-bold text-blue-100 uppercase tracking-wider">Ban Chấp Hành Đoàn thôn Hà Quảng Đông</span>
+                  <span 
+                    className={`w-2 h-2 rounded-full ${
+                      connectionStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 
+                      connectionStatus === 'error' ? 'bg-red-400' : 'bg-yellow-400'
+                    }`}
+                  ></span>
+                  <span className="text-[10px] font-bold text-blue-100 uppercase tracking-wider">
+                    {connectionStatus === 'connected' ? 'Đang hoạt động' : 
+                     connectionStatus === 'error' ? 'Mất kết nối' : 'Đang kết nối...'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -185,18 +238,30 @@ export default function ChatWidget() {
                     <div
                       className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-xs font-semibold shadow-sm leading-relaxed ${
                         isMe
-                          ? 'bg-blue-600 text-white rounded-br-none'
+                          ? msg._failed 
+                            ? 'bg-red-100 text-red-700 rounded-br-none border border-red-200'
+                            : msg._pending 
+                              ? 'bg-blue-400 text-white rounded-br-none opacity-70'
+                              : 'bg-blue-600 text-white rounded-br-none'
                           : 'bg-white text-slate-700 rounded-bl-none border border-slate-100'
                       }`}
                     >
                       <p className="break-words">{msg.content}</p>
-                      <span
-                        className={`text-[9px] block mt-1 text-right ${
-                          isMe ? 'text-blue-200' : 'text-slate-400'
-                        }`}
-                      >
-                        {new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+                      <div className="flex items-center justify-end gap-1 mt-1">
+                        {msg._failed && (
+                          <span className="text-[9px] text-red-500 font-bold">Gửi thất bại</span>
+                        )}
+                        {msg._pending && (
+                          <span className="text-[9px] text-blue-200">Đang gửi...</span>
+                        )}
+                        <span
+                          className={`text-[9px] block text-right ${
+                            isMe ? (msg._failed ? 'text-red-400' : 'text-blue-200') : 'text-slate-400'
+                          }`}
+                        >
+                          {formatTime(msg.created_at)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -219,7 +284,7 @@ export default function ChatWidget() {
             />
             <button
               type="submit"
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() || isSending}
               className="w-9.5 h-9.5 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 rounded-xl flex items-center justify-center shrink-0 cursor-pointer shadow-md shadow-blue-500/10"
             >
               <Send size={16} />
@@ -227,6 +292,17 @@ export default function ChatWidget() {
           </form>
         </div>
       )}
+
+      <style>{`
+        @keyframes slideUpFade {
+          from { opacity: 0; transform: translateY(20px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+          50% { box-shadow: 0 4px 25px rgba(37, 99, 235, 0.7); }
+        }
+      `}</style>
     </div>
   );
 }
