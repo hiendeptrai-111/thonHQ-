@@ -166,22 +166,22 @@ if CLOUDINARY_URL or (CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINAR
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 else:
     STORAGES = {
         "default": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
