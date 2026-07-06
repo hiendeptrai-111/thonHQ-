@@ -108,7 +108,7 @@ export default function UserManager() {
                   <td className="p-5">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center w-fit space-x-1 border ${user.role === 'ADMIN' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
                       {user.role === 'ADMIN' && <Shield size={12} />}
-                      <span>{user.role === 'ADMIN' ? 'BCH Đoàn' : 'Đoàn viên'}</span>
+                      <span>{user.role === 'ADMIN' ? 'Chi Đoàn' : 'Đoàn viên'}</span>
                     </span>
                   </td>
                   <td className="p-5">

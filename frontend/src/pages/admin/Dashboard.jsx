@@ -42,8 +42,8 @@ export default function Dashboard() {
         <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 max-w-xl">
           <span className="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Phiên bản Quản trị v1.0</span>
-          <h2 className="text-3xl font-black mt-4 leading-tight">Chào mừng trở lại,<br/> Ban chấp hành Đoàn thôn</h2>
-          <p className="text-slate-300 text-sm mt-3 font-semibold">Theo dõi hoạt động, quản lý phong trào đoàn viên Hà Quảng Đông thông qua số liệu trực quan bên dưới.</p>
+          <h2 className="text-3xl font-black mt-4 leading-tight">Chào mừng trở lại,<br/> Chi Đoàn Hà Quãng</h2>
+          <p className="text-slate-300 text-sm mt-3 font-semibold">Theo dõi hoạt động, quản lý phong trào đoàn viên Hà Quãng thông qua số liệu trực quan bên dưới.</p>
         </div>
       </div>
 

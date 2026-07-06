@@ -215,4 +215,4 @@ else:
     EMAIL_USE_SSL = True
     EMAIL_USE_TLS = False
     EMAIL_TIMEOUT = 10
-    DEFAULT_FROM_EMAIL = f"Đoàn thôn Hà Quảng Đông <{EMAIL_HOST_USER}>"
+    DEFAULT_FROM_EMAIL = f"Chi Đoàn Hà Quãng <{EMAIL_HOST_USER}>"

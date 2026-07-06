@@ -105,7 +105,7 @@ export default function Register() {
             Đăng ký tài khoản
           </h2>
           <p className="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider">
-            Cộng đồng đoàn viên Hà Quảng Đông
+            Cộng đồng đoàn viên Hà Quãng
           </p>
         </div>
 

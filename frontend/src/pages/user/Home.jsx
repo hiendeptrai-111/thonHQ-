@@ -92,7 +92,7 @@ export default function Home() {
         title: ideaTitle,
         content: ideaContent
       });
-      setIdeaSuccess('Gửi ý tưởng thành công! Cảm ơn đóng góp sáng kiến của bạn cho Đoàn thôn.');
+      setIdeaSuccess('Gửi ý tưởng thành công! Cảm ơn đóng góp sáng kiến của bạn cho Chi Đoàn.');
       setTimeout(() => {
         setIsIdeaModalOpen(false);
       }, 2000);
@@ -163,7 +163,7 @@ export default function Home() {
           <div className="space-y-4">
             <span className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4.5 py-2 rounded-full text-[11px] font-black tracking-widest uppercase mb-2 shadow-lg shadow-blue-500/20 backdrop-blur-sm border border-blue-400/20 w-fit">
               <Sparkles size={14} className="text-yellow-300 animate-pulse" />
-              <span>Đoàn Thôn Hà Quảng Đông</span>
+              <span>Chi Đoàn Hà Quãng</span>
             </span>
             <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tight drop-shadow-xl">
               Khát Vọng Trẻ,<br/>

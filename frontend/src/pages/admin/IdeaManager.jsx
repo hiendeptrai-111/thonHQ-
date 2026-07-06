@@ -44,7 +44,7 @@ export default function IdeaManager() {
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-800">Ý tưởng & Đề xuất từ Đoàn viên</h2>
-            <p className="text-xs text-slate-400 font-semibold mt-0.5">Quản lý và xét duyệt các sáng kiến xây dựng phong trào Đoàn thôn Hà Quảng Đông.</p>
+            <p className="text-xs text-slate-400 font-semibold mt-0.5">Quản lý và xét duyệt các sáng kiến xây dựng phong trào Chi Đoàn Hà Quãng.</p>
           </div>
         </div>
       </div>

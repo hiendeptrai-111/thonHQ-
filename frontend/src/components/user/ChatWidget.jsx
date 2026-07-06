@@ -225,7 +225,7 @@ export default function ChatWidget() {
                   <MessageCircle size={22} />
                 </div>
                 <p className="text-xs font-bold text-slate-800">Xin chào đoàn viên!</p>
-                <p className="text-[11px] text-slate-400 font-semibold max-w-[200px]">Bạn có thắc mắc hoặc đề xuất gì? Hãy gửi tin nhắn cho Ban Chấp Hành Đoàn thôn Hà Quảng Đông tại đây nhé.</p>
+                <p className="text-[11px] text-slate-400 font-semibold max-w-[200px]">Bạn có thắc mắc hoặc đề xuất gì? Hãy gửi tin nhắn cho Chi Đoàn Hà Quãng tại đây nhé.</p>
               </div>
             ) : (
               messages.map((msg) => {

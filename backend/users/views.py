@@ -55,8 +55,8 @@ class SendRegisterCodeView(APIView):
                 defaults={'code': code}
             )
 
-            subject = 'Mã xác minh đăng ký tài khoản - Đoàn thôn Hà Quảng Đông'
-            message = f'Chào bạn,\n\nMã xác minh đăng ký tài khoản của bạn là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
+            subject = 'Mã xác minh đăng ký tài khoản - Chi Đoàn Hà Quãng'
+            message = f'Chào bạn,\n\nMã xác minh đăng ký tài khoản của bạn là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nTrân trọng,\nChi Đoàn Hà Quãng.'
             
             send_email(email, subject, message)
             return Response({"detail": "Mã xác minh đã được gửi thành công qua email của bạn."})
@@ -85,8 +85,8 @@ class SendResetPasswordCodeView(APIView):
                 defaults={'code': code}
             )
 
-            subject = 'Mã đặt lại mật khẩu - Đoàn thôn Hà Quảng Đông'
-            message = f'Chào {user.username},\n\nBạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.\nMã xác minh đặt lại mật khẩu là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\nTrân trọng,\nBan Chấp Hành Đoàn thôn Hà Quảng Đông.'
+            subject = 'Mã đặt lại mật khẩu - Chi Đoàn Hà Quãng'
+            message = f'Chào {user.username},\n\nBạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình.\nMã xác minh đặt lại mật khẩu là: {code}\nMã xác minh này có hiệu lực trong vòng 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\nTrân trọng,\nChi Đoàn Hà Quãng.'
             
             send_email(email, subject, message)
             return Response({"detail": "Mã xác minh đặt lại mật khẩu đã được gửi đến email của bạn."})

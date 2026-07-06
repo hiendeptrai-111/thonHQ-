@@ -34,7 +34,7 @@ def send_email(to_email, subject, text_content):
 def _send_via_brevo(to_email, subject, text_content, api_key):
     """Gửi email qua Brevo (Sendinblue) transactional HTTP API."""
     sender_email = os.environ.get('EMAIL_HOST_USER', 'noreply@example.com')
-    sender_name = 'Đoàn thôn Hà Quảng Đông'
+    sender_name = 'Chi Đoàn Hà Quãng'
 
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {

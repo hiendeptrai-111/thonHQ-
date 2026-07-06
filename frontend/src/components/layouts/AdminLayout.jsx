@@ -32,7 +32,7 @@ export default function AdminLayout() {
             <img src="/logo-doan-real.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-base font-black tracking-wider bg-gradient-to-r from-blue-200 to-white bg-clip-text text-transparent truncate">Hà Quảng Đông</span>
+            <span className="text-base font-black tracking-wider bg-gradient-to-r from-blue-200 to-white bg-clip-text text-transparent truncate">Hà Quãng</span>
             <span className="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Hệ thống Quản trị</span>
           </div>
         </div>
@@ -91,7 +91,7 @@ export default function AdminLayout() {
             <div className="flex items-center space-x-3">
               <div className="flex flex-col items-end hidden sm:flex">
                 <span className="text-sm font-bold text-slate-800">Admin</span>
-                <span className="text-xs text-blue-600 font-semibold uppercase tracking-wider">Ban chấp hành</span>
+                <span className="text-xs text-blue-600 font-semibold uppercase tracking-wider">Chi Đoàn</span>
               </div>
               <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-extrabold shadow-md shadow-blue-500/10">
                 <User size={18} />

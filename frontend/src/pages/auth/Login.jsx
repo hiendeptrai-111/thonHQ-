@@ -49,7 +49,7 @@ export default function Login() {
             Đăng nhập hệ thống
           </h2>
           <p className="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider">
-            Cộng đồng đoàn viên Hà Quảng Đông
+            Cộng đồng đoàn viên Hà Quãng
           </p>
         </div>
         <form className="space-y-4 pt-2" onSubmit={handleLogin}>
@@ -130,7 +130,7 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2 anim-splash-text">
-              <h1 className="text-2xl md:text-3xl font-black text-white tracking-wide">Đoàn thôn Hà Quảng Đông</h1>
+              <h1 className="text-2xl md:text-3xl font-black text-white tracking-wide">Chi Đoàn Hà Quãng</h1>
               <p className="text-blue-400 font-bold text-xs uppercase tracking-widest animate-pulse">Đăng nhập thành công! Đang tải dữ liệu...</p>
             </div>
           </div>

@@ -175,7 +175,7 @@ class PollViewSet(viewsets.ModelViewSet):
         if send_notification == True or send_notification == 'true':
             Notification.objects.create(
                 title=f"Biểu quyết mới: {question}",
-                content=f"BCH Đoàn phát động cuộc khảo sát/bình chọn ý kiến mới: \"{question}\". Hãy tham gia đóng góp tiếng nói của bạn.",
+                content=f"Chi Đoàn phát động cuộc khảo sát/bình chọn ý kiến mới: \"{question}\". Hãy tham gia đóng góp tiếng nói của bạn.",
                 target_url="/polls"
             )
 

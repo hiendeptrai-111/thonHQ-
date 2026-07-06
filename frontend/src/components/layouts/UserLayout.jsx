@@ -99,7 +99,7 @@ export default function UserLayout() {
                   <img src="/logo-doan-real.png" alt="Logo Đoàn" className="w-full h-full object-contain" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-extrabold text-2xl tracking-tight text-gray-900 leading-none">Hà Quảng Đông</span>
+                  <span className="font-extrabold text-2xl tracking-tight text-gray-900 leading-none">Hà Quãng</span>
                   <span className="text-xs font-medium text-primary uppercase tracking-widest mt-1">Đoàn Thanh Niên</span>
                 </div>
               </Link>
@@ -271,10 +271,10 @@ export default function UserLayout() {
               <div className="w-10 h-10 rounded-full overflow-hidden bg-white p-0.5 shadow-md">
                 <img src="/logo-doan-real.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
-              <span className="font-black text-white text-lg tracking-tight">Đoàn thôn Hà Quảng Đông</span>
+              <span className="font-black text-white text-lg tracking-tight">Chi Đoàn Hà Quãng</span>
             </div>
             <p className="text-xs text-slate-400 font-semibold leading-relaxed max-w-sm">
-              Đoàn TNCS Hồ Chí Minh - Ban Chấp Hành Đoàn thôn Hà Quảng Đông. Nơi rèn luyện bản lĩnh, phát huy nhiệt huyết sáng tạo và tinh thần xung kích vì cộng đồng của tuổi trẻ Hà Quảng Đông.
+              Đoàn TNCS Hồ Chí Minh - Chi Đoàn Hà Quãng. Nơi rèn luyện bản lĩnh, phát huy nhiệt huyết sáng tạo và tinh thần xung kích vì cộng đồng của tuổi trẻ Hà Quãng.
             </p>
           </div>
 
@@ -322,7 +322,7 @@ export default function UserLayout() {
             <ul className="space-y-2.5 text-xs font-semibold text-slate-400">
               <li className="flex items-start space-x-2">
                 <MapPin size={16} className="text-blue-500 shrink-0 mt-0.5" />
-                <span className="leading-relaxed">Nhà văn hóa thôn Hà Quảng Đông, Xã Điện Dương, Thị xã Điện Bàn, Tỉnh Quảng Nam</span>
+                <span className="leading-relaxed">Nhà văn hóa thôn Hà Quãng, Xã Điện Dương, Thị xã Điện Bàn, Tỉnh Quảng Nam</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail size={16} className="text-blue-500 shrink-0" />
@@ -339,7 +339,7 @@ export default function UserLayout() {
         {/* Bottom copyright & socials */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-xs font-semibold text-slate-500 text-center sm:text-left leading-normal">
-            &copy; 2026 Ban Chấp Hành Đoàn thôn Hà Quảng Đông. Phát triển bởi tuổi trẻ tiên phong Hà Quảng Đông.
+            &copy; 2026 Chi Đoàn Hà Quãng. Phát triển bởi tuổi trẻ tiên phong Hà Quãng.
           </div>
           <div className="flex items-center space-x-4">
             <a 
