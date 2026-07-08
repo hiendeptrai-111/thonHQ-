@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, User, MessageCircle, Search } from 'lucide-react';
+import { Send, User, MessageCircle, Search, ArrowLeft } from 'lucide-react';
 import api from '../../api';
 
 const getUsernameFromToken = () => {
@@ -122,9 +122,9 @@ export default function ChatManager() {
   );
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden h-[calc(100vh-13rem)] flex font-sans">
+    <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm overflow-hidden h-[calc(100vh-10rem)] md:h-[calc(100vh-13rem)] flex font-sans">
       {/* Sidebar: Threads list */}
-      <div className="w-1/3 border-r border-slate-100 flex flex-col h-full bg-slate-50/20">
+      <div className={`w-full md:w-1/3 border-r border-slate-100 flex flex-col h-full bg-slate-50/20 shrink-0 ${activeThread ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4 border-b border-slate-100 space-y-3">
           <h2 className="text-base font-black text-slate-800">Trò chuyện hỗ trợ</h2>
           <div className="relative">
@@ -178,23 +178,29 @@ export default function ChatManager() {
                     </div>
                   </div>
                 );
-            })
+              })
           )}
         </div>
       </div>
 
       {/* Main Panel: Message history and input */}
-      <div className="flex-1 flex flex-col h-full bg-white">
+      <div className={`flex-1 flex flex-col h-full bg-white ${!activeThread ? 'hidden md:flex' : 'flex'}`}>
         {activeThread ? (
           <>
             {/* Header info */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shadow-sm bg-slate-50/20">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-xl flex items-center justify-center font-extrabold shadow-md shadow-blue-500/10">
+            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-100 flex items-center shadow-sm bg-slate-50/20 gap-3">
+              <button 
+                onClick={() => setActiveThread(null)}
+                className="md:hidden p-2 rounded-xl bg-slate-100 text-slate-650 hover:bg-slate-200 transition-colors shrink-0"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-xl flex items-center justify-center font-extrabold shadow-md shadow-blue-500/10 shrink-0">
                   <User size={18} />
                 </div>
-                <div>
-                  <h3 className="text-sm font-black text-slate-800 leading-snug">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-black text-slate-800 leading-snug truncate">
                     {`${activeThread.last_name} ${activeThread.first_name}`.trim() || activeThread.username}
                   </h3>
                   <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider mt-0.5">@{activeThread.username}</p>

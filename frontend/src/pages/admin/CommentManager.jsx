@@ -51,7 +51,8 @@ export default function CommentManager() {
         <p className="text-xs text-slate-400 font-semibold mt-0.5">Duyệt, ẩn hoặc xóa các phản hồi, bình luận vi phạm chính sách trên hệ thống</p>
       </div>
       
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/75 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 font-extrabold">
@@ -128,6 +129,58 @@ export default function CommentManager() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card List */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {loading ? (
+          <div className="p-6 text-center text-slate-500 font-semibold">Đang tải...</div>
+        ) : comments.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">Chưa có bình luận nào</div>
+        ) : (
+          comments.map((comment) => (
+            <div key={comment.id} className={`p-4 ${comment.is_hidden ? 'bg-slate-50/50' : ''}`}>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-bold text-slate-800">@{comment.author_name}</span>
+                    <span className="text-[10px] text-slate-400 font-semibold">{new Date(comment.created_at).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  {comment.parent && (
+                    <span className="text-[10px] text-blue-500 font-bold flex items-center space-x-1 mt-1">
+                      <CornerDownRight size={10} />
+                      <span>Phản hồi @{comment.parent_author}</span>
+                    </span>
+                  )}
+                  <p className="text-sm text-slate-600 mt-1.5 leading-relaxed line-clamp-3">{comment.content}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${comment.is_hidden ? 'text-amber-700 bg-amber-50 border border-amber-100' : 'text-emerald-700 bg-emerald-50 border border-emerald-100'}`}>
+                      {comment.is_hidden ? 'Đã ẩn' : 'Hiển thị'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex space-x-1.5 shrink-0">
+                  <button 
+                    onClick={() => toggleHidden(comment)}
+                    className={`p-2 rounded-lg transition-all border ${
+                      comment.is_hidden 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-amber-50 text-amber-600 border-amber-100'
+                    }`}
+                  >
+                    {comment.is_hidden ? <Eye size={16} /> : <EyeOff size={16} />}
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(comment.id)} 
+                    className="p-2 bg-rose-50 text-rose-500 border border-rose-100 rounded-lg transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

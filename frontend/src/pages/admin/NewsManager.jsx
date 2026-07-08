@@ -191,21 +191,22 @@ export default function NewsManager() {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/50">
+      <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white/50">
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold text-slate-800">Quản lý Tin tức</h2>
+          <h2 className="text-lg md:text-xl font-bold text-slate-800">Quản lý Tin tức</h2>
           <p className="text-xs text-slate-400 font-semibold mt-0.5">Tạo, sửa đổi và kiểm soát xuất bản các tin bài</p>
         </div>
         <button 
           onClick={openAddModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 transform hover:-translate-y-0.5"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2.5 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 transform hover:-translate-y-0.5 text-sm"
         >
           <Plus size={18} />
           <span>Thêm bài viết mới</span>
         </button>
       </div>
       
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/75 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 font-extrabold">
@@ -288,10 +289,76 @@ export default function NewsManager() {
         </table>
       </div>
 
+      {/* Mobile Card List */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {loading ? (
+          <div className="p-6 text-center text-slate-500 font-semibold">Đang tải danh sách bài viết...</div>
+        ) : articles.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">Chưa có bài viết nào được đăng tải</div>
+        ) : (
+          articles.map((article) => (
+            <div key={article.id} className="p-4 flex flex-col space-y-3">
+              <div className="flex space-x-3 items-start">
+                <div className="w-16 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-100 shadow-sm shrink-0">
+                  {article.image ? (
+                    <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
+                      <ImageIcon size={18} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-bold text-slate-900 line-clamp-2 leading-snug">{article.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-1">ID: #{article.id} • {new Date(article.created_at).toLocaleDateString('vi-VN')}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-blue-100">
+                  {article.category_name}
+                </span>
+                <span className="text-[10px] font-semibold text-slate-500">
+                  Tác giả: {article.author_name}
+                </span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${article.is_pinned ? 'text-amber-700 bg-amber-50 border border-amber-200' : 'text-slate-400 bg-slate-50 border border-slate-100'}`}>
+                  {article.is_pinned ? 'Đã ghim' : 'Không ghim'}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-50">
+                <button 
+                  onClick={() => togglePublish(article)}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${article.is_published ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-slate-500 bg-slate-100 border-slate-200'}`}
+                >
+                  {article.is_published ? <Eye size={12} /> : <EyeOff size={12} />}
+                  <span>{article.is_published ? 'Đã xuất bản' : 'Đang ẩn'}</span>
+                </button>
+
+                <div className="flex space-x-1.5">
+                  <button 
+                    onClick={() => openEditModal(article)}
+                    className="text-blue-600 p-2 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all duration-200" 
+                  >
+                    <Edit size={16} />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(article.id)} 
+                    className="text-red-500 p-2 rounded-xl bg-red-50 hover:bg-red-100 transition-all duration-200" 
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Edit / Add Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[95vh] md:max-h-[90vh] mx-2 md:mx-0">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div className="flex flex-col">
                 <h3 className="text-lg font-bold text-slate-800">
@@ -447,7 +514,7 @@ export default function NewsManager() {
                 />
               </div>
 
-              <div className="flex items-center space-x-6 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-6 pt-2">
                 <label className="flex items-center space-x-2.5 cursor-pointer select-none">
                   <input
                     type="checkbox"

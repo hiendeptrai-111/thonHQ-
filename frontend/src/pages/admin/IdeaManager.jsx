@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, Trash2, Calendar, User } from 'lucide-react';
+import { Lightbulb, Trash2, Calendar, User, ArrowLeft } from 'lucide-react';
 import api from '../../api';
 
 export default function IdeaManager() {
@@ -37,13 +37,13 @@ export default function IdeaManager() {
 
   return (
     <div className="space-y-6 font-sans">
-      <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+      <div className="flex justify-between items-center bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-inner">
-            <Lightbulb size={24} />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-50 text-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner shrink-0">
+            <Lightbulb size={22} />
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-800">Ý tưởng & Đề xuất từ Đoàn viên</h2>
+            <h2 className="text-lg md:text-xl font-black text-slate-800">Ý tưởng & Đề xuất từ Đoàn viên</h2>
             <p className="text-xs text-slate-400 font-semibold mt-0.5">Quản lý và xét duyệt các sáng kiến xây dựng phong trào Chi Đoàn Hà Quãng.</p>
           </div>
         </div>
@@ -51,8 +51,8 @@ export default function IdeaManager() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Side: Ideas list */}
-        <div className="lg:col-span-1 bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden h-[calc(100vh-17rem)] flex flex-col">
-          <div className="p-4 border-b border-slate-100 bg-slate-50/20">
+        <div className={`lg:col-span-1 bg-white border border-slate-100 rounded-2xl md:rounded-3xl shadow-sm overflow-hidden h-[calc(100vh-10rem)] md:h-[calc(100vh-17rem)] flex flex-col ${selectedIdea ? 'hidden lg:flex' : 'flex'}`}>
+          <div className="p-4 border-b border-slate-100 bg-slate-50/20 flex justify-between items-center">
             <span className="text-xs font-black text-slate-800 uppercase tracking-wider">Danh sách ý tưởng ({ideas.length})</span>
           </div>
           <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
@@ -88,22 +88,30 @@ export default function IdeaManager() {
         </div>
 
         {/* Right Side: Idea Detail view */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-3xl shadow-sm h-[calc(100vh-17rem)] flex flex-col overflow-hidden">
+        <div className={`lg:col-span-2 bg-white border border-slate-100 rounded-2xl md:rounded-3xl shadow-sm h-[calc(100vh-10rem)] md:h-[calc(100vh-17rem)] flex flex-col overflow-hidden ${!selectedIdea ? 'hidden lg:flex' : 'flex'}`}>
           {selectedIdea ? (
             <div className="flex flex-col h-full">
               {/* Header */}
-              <div className="p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50/20">
-                <div className="space-y-1">
-                  <h3 className="text-base font-extrabold text-slate-900 leading-snug">{selectedIdea.title}</h3>
-                  <div className="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                    <span className="flex items-center gap-1">
-                      <User size={12} />
-                      <span>{selectedIdea.author_full_name} (@{selectedIdea.author_name})</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
-                      <span>{new Date(selectedIdea.created_at).toLocaleString('vi-VN')}</span>
-                    </span>
+              <div className="p-4 md:p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/20 gap-3">
+                <div className="flex items-center space-x-3 min-w-0">
+                  <button 
+                    onClick={() => setSelectedIdea(null)}
+                    className="lg:hidden p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shrink-0"
+                  >
+                    <ArrowLeft size={16} />
+                  </button>
+                  <div className="space-y-1 min-w-0">
+                    <h3 className="text-sm md:text-base font-extrabold text-slate-900 leading-snug truncate">{selectedIdea.title}</h3>
+                    <div className="flex items-center gap-3 text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                      <span className="flex items-center gap-1">
+                        <User size={12} />
+                        <span className="truncate">{selectedIdea.author_full_name}</span>
+                      </span>
+                      <span className="flex items-center gap-1 whitespace-nowrap">
+                        <Calendar size={12} />
+                        <span>{new Date(selectedIdea.created_at).toLocaleDateString('vi-VN')}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <button
@@ -116,8 +124,8 @@ export default function IdeaManager() {
               </div>
 
               {/* Content Body */}
-              <div className="flex-1 p-6 overflow-y-auto bg-slate-50/30">
-                <div className="text-xs text-slate-700 leading-relaxed font-semibold whitespace-pre-wrap bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-slate-50/30">
+                <div className="text-xs md:text-sm text-slate-700 leading-relaxed font-semibold whitespace-pre-wrap bg-white border border-slate-100 rounded-2xl p-4 md:p-6 shadow-sm">
                   {selectedIdea.content}
                 </div>
               </div>
@@ -134,7 +142,6 @@ export default function IdeaManager() {
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }

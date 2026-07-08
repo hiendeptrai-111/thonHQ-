@@ -132,21 +132,22 @@ export default function PollManager() {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white/50">
+      <div className="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white/50">
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold text-slate-800">Quản lý Bình chọn</h2>
+          <h2 className="text-lg md:text-xl font-bold text-slate-800">Quản lý Bình chọn</h2>
           <p className="text-xs text-slate-400 font-semibold mt-0.5">Tạo các cuộc khảo sát, thăm dò ý kiến đoàn viên thanh niên</p>
         </div>
         <button 
           onClick={openAddModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 transform hover:-translate-y-0.5"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-5 py-2.5 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all shadow-md shadow-blue-500/10 text-sm"
         >
           <Plus size={18} />
           <span>Tạo bình chọn mới</span>
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/75 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 font-extrabold">
@@ -253,10 +254,64 @@ export default function PollManager() {
         </table>
       </div>
 
+      {/* Mobile Card List */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {loading ? (
+          <div className="p-6 text-center text-slate-500 font-semibold">Đang tải...</div>
+        ) : polls.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">Chưa có cuộc khảo sát nào</div>
+        ) : (
+          polls.map((poll) => (
+            <div key={poll.id} className="p-4">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-slate-900">{poll.question}</p>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span className="text-[10px] text-slate-400 font-semibold">{poll.total_votes} lượt vote</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                      poll.is_expired ? 'text-red-700 bg-red-50 border-red-200'
+                      : poll.is_active ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                      : 'text-slate-500 bg-slate-100 border-slate-200'
+                    }`}>
+                      {poll.is_expired ? 'Hết hạn' : poll.is_active ? 'Đang mở' : 'Đã khóa'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex space-x-1.5 shrink-0">
+                  <button onClick={() => openEditModal(poll)} className="p-2 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                    <Edit size={16} />
+                  </button>
+                  <button onClick={() => handleDelete(poll.id)} className="p-2 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                {poll.options.map((opt) => {
+                  const percent = poll.total_votes > 0 ? Math.round((opt.votes_count / poll.total_votes) * 100) : 0;
+                  return (
+                    <div key={opt.id} className="space-y-1">
+                      <div className="flex justify-between text-xs font-bold text-slate-700">
+                        <span>{opt.option_text}</span>
+                        <span>{opt.votes_count} ({percent}%)</span>
+                      </div>
+                      <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-blue-600 h-full rounded-full transition-all duration-500" style={{ width: `${percent}%` }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+
       {/* Edit / Create Poll Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[95vh] md:max-h-[90vh] mx-2 md:mx-0">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <div className="flex flex-col">
                 <h3 className="text-lg font-bold text-slate-800">

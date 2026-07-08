@@ -38,25 +38,25 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-900 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-900 to-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 max-w-xl">
           <span className="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Phiên bản Quản trị v1.0</span>
-          <h2 className="text-3xl font-black mt-4 leading-tight">Chào mừng trở lại,<br/> Chi Đoàn Hà Quãng</h2>
-          <p className="text-slate-300 text-sm mt-3 font-semibold">Theo dõi hoạt động, quản lý phong trào đoàn viên Hà Quãng thông qua số liệu trực quan bên dưới.</p>
+          <h2 className="text-xl md:text-3xl font-black mt-3 md:mt-4 leading-tight">Chào mừng trở lại,<br/> Chi Đoàn Hà Quãng</h2>
+          <p className="text-slate-300 text-xs md:text-sm mt-2 md:mt-3 font-semibold">Theo dõi hoạt động, quản lý phong trào đoàn viên Hà Quãng thông qua số liệu trực quan bên dưới.</p>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {statItems.map((stat, idx) => (
-          <div key={idx} className={`bg-white p-6 rounded-2xl border ${stat.bg} shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center space-x-5`}>
-            <div className="p-4 rounded-xl bg-white shadow-sm border border-slate-100">
+          <div key={idx} className={`bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border ${stat.bg} shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center space-x-3 md:space-x-5`}>
+            <div className="p-2.5 md:p-4 rounded-lg md:rounded-xl bg-white shadow-sm border border-slate-100 shrink-0">
               {stat.icon}
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stat.name}</p>
-              <h3 className="text-2xl font-black text-slate-800 mt-1">{loading ? '...' : stat.value}</h3>
+              <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">{stat.name}</p>
+              <h3 className="text-lg md:text-2xl font-black text-slate-800 mt-0.5 md:mt-1">{loading ? '...' : stat.value}</h3>
             </div>
           </div>
         ))}
@@ -81,7 +81,7 @@ export default function Dashboard() {
             ) : (
               stats.recent_articles.map((art) => (
                 <div key={art.id} className="flex justify-between items-center py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50/20 px-2 rounded-xl transition-colors">
-                  <div className="flex items-center space-x-4 max-w-[70%]">
+                  <div className="flex items-center space-x-3 md:space-x-4 min-w-0 flex-1">
                     <div className="w-12 h-8 rounded-lg bg-slate-100 overflow-hidden border border-slate-100 flex-shrink-0">
                       {art.image ? (
                         <img src={art.image} alt={art.title} className="w-full h-full object-cover" />
@@ -96,7 +96,7 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-400 font-medium mt-0.5">{art.category_name} • {new Date(art.created_at).toLocaleDateString('vi-VN')}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-black text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">{art.views.toLocaleString('vi-VN')} lượt xem</span>
+                  <span className="text-[10px] md:text-xs font-black text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 md:px-3 py-1 rounded-full whitespace-nowrap shrink-0">{art.views.toLocaleString('vi-VN')} lượt xem</span>
                 </div>
               ))
             )}

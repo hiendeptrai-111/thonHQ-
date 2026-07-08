@@ -67,7 +67,8 @@ export default function UserManager() {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/75 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 font-extrabold">
@@ -134,6 +135,47 @@ export default function UserManager() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card List */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {loading ? (
+          <div className="p-6 text-center text-slate-500 font-semibold">Đang tải...</div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">Không tìm thấy người dùng</div>
+        ) : (
+          filteredUsers.map((user) => (
+            <div key={user.id} className="p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-extrabold text-sm border border-blue-100 shrink-0">
+                  {user.first_name ? user.first_name[0].toUpperCase() : 'U'}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold text-slate-900 truncate">{user.last_name} {user.first_name}</span>
+                  <span className="text-xs text-slate-400 truncate">@{user.username}</span>
+                  <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${user.role === 'ADMIN' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                      {user.role === 'ADMIN' ? 'Chi Đoàn' : 'Đoàn viên'}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${user.is_active ? 'text-emerald-700 bg-emerald-50 border border-emerald-100' : 'text-rose-700 bg-rose-50 border border-rose-100'}`}>
+                      {user.is_active ? 'Hoạt động' : 'Tạm khóa'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => toggleActive(user)}
+                className={`p-2.5 rounded-xl transition-all border shrink-0 ${
+                  user.is_active 
+                    ? 'bg-rose-50 text-rose-600 border-rose-100' 
+                    : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                }`}
+              >
+                {user.is_active ? <UserX size={18} /> : <UserCheck size={18} />}
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
